@@ -1,0 +1,198 @@
+---
+title: "AS Carbon Audit 2024-2025"
+subtitle: "The Carbon Impact of the Association"
+author: "Amy Zhao, Director of Research and Data Analytics; and Ji Moon, Technical Projects Coordinator, for the Office of Environmental Justice Affairs"
+date: today
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    incremental: false
+    width: 1280
+    height: 800
+    embed-resources: true
+    fig-align: center
+    echo: false
+    transition: fade
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(plotly)
+
+emissions <- read_csv("data/emissions.csv", show_col_types = FALSE)
+agg       <- read_csv("data/office_category.csv", show_col_types = FALSE)
+
+office_totals <- agg |>
+  group_by(office) |>
+  summarise(co2e = sum(co2e), .groups = "drop") |>
+  arrange(desc(co2e))
+office_order <- office_totals$office
+
+category_totals <- agg |>
+  group_by(category) |>
+  summarise(co2e = sum(co2e), .groups = "drop") |>
+  arrange(desc(co2e))
+category_order <- category_totals$category
+
+PALETTE <- c(
+  "Travel & Transportation" = "#d62728",
+  "Professional Services"   = "#1f77b4",
+  "Events"                  = "#ff7f0e",
+  "Equipment & Rentals"     = "#2ca02c",
+  "Food & Catering"         = "#9467bd",
+  "Goods & Merchandise"     = "#8c564b",
+  "Other"                   = "#7f7f7f",
+  "Uncategorized"           = "#bcbd22"
+)
+```
+
+## Why are we doing this?
+
+-   **Sustainability:** making sure the needs of the present do not outweigh the needs of the future
+-   Contextualize the planet-warming potential of the Association
+-   Make sure our money serves a livable climate
+-   Get in compliance with campus climate goals:
+    -   Revising Climate Action Plan for first time in a decade
+-   Goal: **Become first carbon-neutral student government in the country**
+    -   First-of-its-kind initiative among UC student governments
+
+## How we did it
+
+-   Use the **Climatiq API**
+-   Two-step process:
+    1.  Feed purchase description into system, which matches it to an **emissions factor** (i.e., for every \$ spent on this item, how much $\text{CO}_2\text{e}$ is emitted?)
+    2.  System calculates $\text{CO}_2$ equivalent per purchase
+-   Use Python/R for visualizations and statistical analysis
+
+------------------------------------------------------------------------
+
+## Overview
+
+-   **22 offices** across Associated Students, FY 2024-2025
+-   **`r format(nrow(emissions), big.mark = ",")` transactions** with a computed emission factor
+-   **`r format(round(sum(emissions$co2e)), big.mark = ",")` kg CO~2~e** total (spend-based Scope 3)
+-   Three views in this deck:
+    1.  Distribution of per-transaction emissions by office (boxplot)
+    2.  Total emissions by office, split by expenditure category (stacked bar)
+    3.  Flow from offices to expenditure categories (Sankey)
+
+------------------------------------------------------------------------
+
+## Emissions by office --- distribution {.smaller}
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6.5
+positive <- emissions |>
+  filter(co2e > 0) |>
+  mutate(office = factor(office, levels = rev(office_order)))
+
+ggplot(positive, aes(x = co2e, y = office)) +
+  geom_boxplot(fill = "#2b8a3e", colour = "#1b4332", alpha = 0.85,
+               width = 0.65,
+               outlier.colour = "#888888", outlier.alpha = 0.4,
+               outlier.size = 1) +
+  scale_x_log10(labels = label_comma()) +
+  labs(x = "Emissions per transaction (kg CO2e, log scale)",
+       y = NULL,
+       title = "Per-transaction emissions by office — shared log x-axis") +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_line(linetype = "dotted"),
+        plot.title.position = "plot")
+```
+
+::: aside
+Offices ordered by total CO~2~e (highest at top). Zero / negative values excluded from log axis.
+:::
+
+------------------------------------------------------------------------
+
+## Total emissions by office --- stacked by category {.smaller}
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6.5
+stack_df <- agg |>
+  mutate(office   = factor(office,   levels = office_order),
+         category = factor(category, levels = rev(category_order)))
+
+ggplot(stack_df, aes(x = office, y = co2e, fill = category)) +
+  geom_col(colour = "white", linewidth = 0.3) +
+  scale_fill_manual(values = PALETTE, breaks = category_order) +
+  scale_y_continuous(labels = label_comma()) +
+  labs(x = NULL, y = "Total emissions (kg CO2e)",
+       fill = NULL,
+       title = "Total emissions by office, split by expenditure category") +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 35, hjust = 1),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.position = "top",
+        plot.title.position = "plot")
+```
+
+::: aside
+Stacks ordered (bottom → top) by global category total.
+:::
+
+------------------------------------------------------------------------
+
+## Flow: office → category (Sankey)
+
+```{r}
+#| fig-width: 12
+#| fig-height: 7.2
+nodes       <- c(office_order, category_order)
+node_index  <- setNames(seq_along(nodes) - 1L, nodes)
+office_col  <- "#1b4332"
+cat_cols    <- unname(PALETTE[category_order])
+cat_cols[is.na(cat_cols)] <- "#cccccc"
+node_colors <- c(rep(office_col, length(office_order)), cat_cols)
+
+hex_to_rgba <- function(h, a = 0.45) {
+  h <- sub("^#", "", h)
+  r <- strtoi(substr(h, 1, 2), 16)
+  g <- strtoi(substr(h, 3, 4), 16)
+  b <- strtoi(substr(h, 5, 6), 16)
+  sprintf("rgba(%d,%d,%d,%.2f)", r, g, b, a)
+}
+
+links <- agg |>
+  filter(co2e > 0) |>
+  mutate(source = node_index[office],
+         target = node_index[category],
+         color  = vapply(PALETTE[category], hex_to_rgba, character(1), a = 0.45)) |>
+  mutate(color = ifelse(is.na(color), hex_to_rgba("#cccccc"), color))
+
+plot_ly(
+  type = "sankey",
+  arrangement = "snap",
+  node = list(label = nodes, color = node_colors,
+              pad = 14, thickness = 14,
+              line = list(color = "white", width = 0.5)),
+  link = list(source = links$source, target = links$target,
+              value  = links$co2e,   color  = links$color,
+              hovertemplate = "%{source.label} → %{target.label}<br>%{value:,.0f} kg CO2e<extra></extra>")
+) |>
+  layout(title = list(text = "Emissions flow: office → expenditure category (kg CO2e)", x = 0.01),
+         font  = list(size = 11),
+         margin = list(l = 10, r = 10, t = 50, b = 10),
+         height = 640)
+```
+
+------------------------------------------------------------------------
+
+## Takeaways
+
+-   **Travel & Transportation** and **Professional Services** dominate totals at VP External and Transportation & Transformation.
+-   **ASCE** has the largest and most dispersed per-transaction distribution --- many small Events and Equipment rentals plus a long outlier tail.
+-   **Equipment & Rentals** is the largest single category by transaction count.
+-   Negative / zero `co2e` rows (credits, reversals, unmapped) were excluded from the log-scale view and shown as Uncategorized in totals.
