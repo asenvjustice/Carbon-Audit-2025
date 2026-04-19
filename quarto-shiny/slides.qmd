@@ -94,10 +94,23 @@ PALETTE <- c(
 ```{r}
 #| context: server
 data_pull <- eventReactive(input$refresh, {
-  con <- db_connect()
+  required <- c("SUPABASE_HOST", "SUPABASE_USER", "SUPABASE_PASSWORD")
+  missing  <- required[Sys.getenv(required) == ""]
+  if (length(missing)) {
+    stop(safeError(paste(
+      "Missing env vars on the server:", paste(missing, collapse = ", "),
+      "- set these in Posit Connect Cloud → Variables and redeploy."
+    )))
+  }
+
+  con <- tryCatch(db_connect(), error = function(e) {
+    stop(safeError(paste("DB connect failed:", conditionMessage(e))))
+  })
   on.exit(dbDisconnect(con), add = TRUE)
 
-  emissions <- dbGetQuery(con, EMISSIONS_SQL)
+  emissions <- tryCatch(dbGetQuery(con, EMISSIONS_SQL), error = function(e) {
+    stop(safeError(paste("Query failed:", conditionMessage(e))))
+  })
 
   agg <- emissions |>
     group_by(office, category) |>
