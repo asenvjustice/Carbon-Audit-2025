@@ -1,7 +1,6 @@
 ---
 title: "AS Carbon Audit 2024-2025"
-subtitle: "The Carbon Impact of the Association"
-author: "Amy Zhao, Director of Research and Data Analytics <br \n> Ji Moon, Technical Projects Coordinator \n Office of Environmental Justice Affairs"
+author: "Amy Zhao, Director of Research and Data Analytics <br \n> Ji Moon, Technical Projects Coordinator <br \n> Office of Environmental Justice Affairs"
 date: today
 format:
   revealjs:
