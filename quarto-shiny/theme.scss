@@ -1,0 +1,214 @@
+/*-- scss:defaults --*/
+
+// Colors
+$dark-green: #5b7f5b;
+$light-green: #a7c49d;
+$cream: #FDFBF7;
+$gray: #64605f;
+$purple: #9158A2;
+$dark_orange: #BF5E28;
+$brown: #F2DDB8;
+$black: #000000;
+
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rokkitt:ital,wght@0,100..900;1,100..900&display=swap');
+
+$Lato: "Lato", sans-serif;
+$Cormorant_Garamond: "Cormorant Garamond", serif;
+$r: "Rokkitt", serif;
+
+// Document Colors
+$body-bg: $dark-green;
+$body-color: $cream;
+$presentation-heading-font: $Cormorant_Garamond;
+$presentation-font-family: $Lato;
+$link-color: $light-green;
+
+/*-- scss:rules --*/
+
+.reveal,
+.reveal body,
+.reveal p,
+.reveal li,
+.reveal .slides section {
+  font-family: $Lato;
+  color: $cream;
+  font-size: 22px;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.85em;
+  line-height: 1.35;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6,
+.reveal .title,
+.reveal .subtitle,
+.reveal .quarto-title-block .title,
+.reveal .quarto-title-block .subtitle {
+  font-family: $Cormorant_Garamond;
+  color: $cream;
+}
+
+.reveal .title {
+  text-align: center;
+  font-size: 40pt;
+}
+
+// EJA logo — Quarto renders the logo image when `logo:` is set in YAML.
+// Target every class/selector it has shipped under across versions, pin to
+// top-right, and give it a soft cream disc so it reads on dark green.
+html body .reveal .slide-logo,
+html body .reveal img.slide-logo,
+html body .reveal-viewport > img.slide-logo,
+html body img.slide-logo {
+  position: fixed !important;
+  top: 10px !important;
+  right: 14px !important;
+  bottom: auto !important;
+  left: auto !important;
+  max-height: 64px !important;
+  max-width: 64px !important;
+  height: auto !important;
+  width: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  pointer-events: none;
+  z-index: 9999 !important;
+}
+
+// Soften ggplot (shiny-plot-output) white canvases with a cream card.
+.reveal .shiny-plot-output,
+.reveal .shiny-image-output {
+  background-color: $cream;
+  border-radius: 12px;
+  padding: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+
+// Plotly widgets (e.g. Sankey): let the card fill the slide width and
+// force the internal plotly containers to stretch with it so the chart
+// doesn't get squished into a narrow column.
+.reveal .html-widget,
+.reveal .plotly.html-widget {
+  background-color: $cream;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  width: 100% !important;
+  max-width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.reveal .plotly.html-widget > div,
+.reveal .plotly.html-widget .plot-container,
+.reveal .plotly.html-widget .svg-container,
+.reveal .plotly.html-widget .main-svg {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+// Slide number indicator — pin to bottom-right.
+.reveal .slide-number,
+.reveal-viewport .slide-number {
+  left: auto !important;
+  top: auto !important;
+  right: 12px !important;
+  bottom: 10px !important;
+  color: $cream !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  font-family: $Lato !important;
+  font-size: 0.7em !important;
+}
+
+// Hero "big number" stat cards — two columns of stacked stats, Garamond
+// numbers with Lato captions beneath.
+.reveal .stats-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4rem;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+.reveal .stats-row > *,
+.reveal .stats-col > * {
+  margin: 0 !important;
+}
+
+.reveal .stats-col {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.reveal .stat {
+  text-align: center;
+  padding: 0.35rem 0.5rem;
+}
+
+.reveal .stat-number {
+  display: block;
+  font-family: $Cormorant_Garamond !important;
+  font-weight: 500;
+  font-size: 3.8em;
+  line-height: 1;
+  color: $cream;
+  margin-bottom: 0.3rem;
+}
+
+.reveal .stat-number .shiny-text-output {
+  display: inline;
+}
+
+.reveal .stat-label {
+  display: block;
+  font-family: $Lato !important;
+  font-size: 0.75em;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: rgba(253, 251, 247, 0.85);
+}
+
+// Single hero stat — centered big number at top of a slide, label beneath.
+.reveal .hero-stat {
+  text-align: center;
+  margin: 0.5rem auto 1.75rem auto;
+}
+
+.reveal .hero-stat .stat-number {
+  font-size: 6em;
+  margin-bottom: 0.4rem;
+}
+
+.reveal .hero-stat .stat-label {
+  font-size: 0.95em;
+}
+
+// Table outputs get the same treatment so they don't float on green.
+.reveal table {
+  background-color: $cream;
+  color: $black;
+  border-radius: 8px;
+  overflow: hidden;
+}

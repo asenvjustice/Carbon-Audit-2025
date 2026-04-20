@@ -4,15 +4,17 @@ author: "Amy Zhao, Director of Research and Data Analytics <br \n> Ji Moon, Tech
 date: today
 format:
   revealjs:
-    theme: simple
+    theme: [simple, theme.scss]
+    logo: www/eja_logo.png
     slide-number: true
+    resources:
+      - www/eja_logo.png
     incremental: false
-    width: 1280
     height: 800
     fig-align: center
     echo: false
     transition: fade
-    auto-stretch: false
+    auto-stretch: true
 server: shiny
 ---
 
@@ -138,8 +140,13 @@ output$fetched_at <- renderText({
   paste0("Last refreshed: ", format(data_pull()$fetched_at, "%Y-%m-%d %H:%M:%S"))
 })
 
-output$tx_count  <- renderText(format(nrow(data_pull()$emissions), big.mark = ","))
-output$total_co2 <- renderText(format(round(sum(data_pull()$emissions$co2e)), big.mark = ","))
+output$tx_count   <- renderText(format(nrow(data_pull()$emissions), big.mark = ","))
+output$total_co2  <- renderText(format(round(sum(data_pull()$emissions$co2e)), big.mark = ","))
+output$total_co2_ctx <- renderText(format(round(sum(data_pull()$emissions$co2e)), big.mark = ","))
+output$total_cost <- renderText(paste0("$", format(round(sum(data_pull()$emissions$cost, na.rm = TRUE)), big.mark = ",")))
+output$mean_co2   <- renderText(format(round(mean(data_pull()$emissions$co2e, na.rm = TRUE), 1), big.mark = ","))
+output$p90_co2    <- renderText(format(round(quantile(data_pull()$emissions$co2e, 0.9, na.rm = TRUE), 1), big.mark = ","))
+output$sd_co2     <- renderText(format(round(sd(data_pull()$emissions$co2e, na.rm = TRUE), 1), big.mark = ","))
 
 output$boxplot <- renderPlot({
   positive <- data_pull()$emissions |>
@@ -239,7 +246,7 @@ textOutput("fetched_at", inline = TRUE)
 -   Goal: **Become first carbon-neutral student government in the country**
     -   First-of-its-kind initiative among UC student governments
 
----
+------------------------------------------------------------------------
 
 ## How we did it
 
@@ -249,7 +256,7 @@ textOutput("fetched_at", inline = TRUE)
     2.  System calculates $\text{CO}_2$ equivalent per purchase
 -   Use Python/R for visualizations and statistical analysis
 
----
+------------------------------------------------------------------------
 
 ## Overview
 
@@ -260,6 +267,56 @@ textOutput("fetched_at", inline = TRUE)
     1.  Distribution of per-transaction emissions by office (boxplot)
     2.  Total emissions by office, split by expenditure category (stacked bar)
     3.  Flow from offices to expenditure categories (Sankey)
+
+------------------------------------------------------------------------
+
+## Headline numbers
+
+::::::::::: stats-row
+:::::: stats-col
+::: stat
+[`r textOutput("tx_count", inline = TRUE)`]{.stat-number} [transactions analyzed]{.stat-label}
+:::
+
+::: stat
+[`r textOutput("total_co2", inline = TRUE)`]{.stat-number} [kg CO₂e total emissions]{.stat-label}
+:::
+
+::: stat
+[`r textOutput("total_cost", inline = TRUE)`]{.stat-number} [total carbon spend]{.stat-label}
+:::
+::::::
+
+:::::: stats-col
+::: stat
+[`r textOutput("mean_co2", inline = TRUE)`]{.stat-number} [mean kg CO₂e per transaction]{.stat-label}
+:::
+
+::: stat
+[`r textOutput("p90_co2", inline = TRUE)`]{.stat-number} [90th percentile kg CO₂e per transaction]{.stat-label}
+:::
+
+::: stat
+[`r textOutput("sd_co2", inline = TRUE)`]{.stat-number} [SD kg CO₂e per transaction]{.stat-label}
+:::
+::::::
+:::::::::::
+
+------------------------------------------------------------------------
+
+## Contextualizing the carbon
+
+::: hero-stat
+[`r textOutput("total_co2_ctx", inline = TRUE)`]{.stat-number}
+
+[kg CO₂e total emissions]{.stat-label}
+:::
+
+-   Equivalent to driving a gas-powered car roughly **2.3 million miles**
+-   Same as the annual electricity use of around **190 U.S. homes**
+-   Would take about **914 acres of U.S. forests** a full year to sequester
+-   Roughly **73,000,000 smartphones charged**
+    -   Source: EPA [Greenhouse Gas Equivalencies Calculator](https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator#results)
 
 ------------------------------------------------------------------------
 

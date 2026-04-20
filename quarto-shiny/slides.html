@@ -6,11 +6,11 @@
 <script src="slides_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.24">
 
-  <meta name="author" content="Amy Zhao, Director of Research and Data Analytics   Ji Moon, Technical Projects Coordinator Office of Environmental Justice Affairs">
-  <meta name="dcterms.date" content="2026-04-19">
+  <meta name="author" content="Amy Zhao, Director of Research and Data Analytics   Ji Moon, Technical Projects Coordinator   Office of Environmental Justice Affairs">
+  <meta name="dcterms.date" content="2026-04-20">
   <title>AS Carbon Audit 2024-2025</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,7 +30,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto-0fde88a82f0356838740f155f1088782.css">
+  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto-66899e036634707f3ea1830a1eba211f.css">
   <link href="slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="slides_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -123,23 +123,22 @@
     }
   </style>
 </head>
-<body class="quarto-light">
+<body class="quarto-dark">
   <div class="reveal">
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">AS Carbon Audit 2024-2025</h1>
-  <p class="subtitle">The Carbon Impact of the Association</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projects Coordinator Office of Environmental Justice Affairs 
+Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projects Coordinator <br> Office of Environmental Justice Affairs 
 </div>
 </div>
 </div>
 
-  <p class="date">2026-04-19</p>
+  <p class="date">2026-04-20</p>
 </section>
 <section id="live-data" class="slide level2 smaller">
 <h2>Live data</h2>
@@ -192,6 +191,49 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 <li>Total emissions by office, split by expenditure category (stacked bar)</li>
 <li>Flow from offices to expenditure categories (Sankey)</li>
 </ol></li>
+</ul>
+</section>
+<section id="headline-numbers" class="slide level2">
+<h2>Headline numbers</h2>
+<div class="stats-row">
+<div class="stats-col">
+<div class="stat">
+<p><span class="stat-number"><span id="tx_count" class="shiny-text-output"></span></span> <span class="stat-label">transactions analyzed</span></p>
+</div>
+<div class="stat">
+<p><span class="stat-number"><span id="total_co2" class="shiny-text-output"></span></span> <span class="stat-label">kg CO₂e total emissions</span></p>
+</div>
+<div class="stat">
+<p><span class="stat-number"><span id="total_cost" class="shiny-text-output"></span></span> <span class="stat-label">total carbon spend</span></p>
+</div>
+</div>
+<div class="stats-col">
+<div class="stat">
+<p><span class="stat-number"><span id="mean_co2" class="shiny-text-output"></span></span> <span class="stat-label">mean kg CO₂e per transaction</span></p>
+</div>
+<div class="stat">
+<p><span class="stat-number"><span id="p90_co2" class="shiny-text-output"></span></span> <span class="stat-label">90th percentile kg CO₂e per transaction</span></p>
+</div>
+<div class="stat">
+<p><span class="stat-number"><span id="sd_co2" class="shiny-text-output"></span></span> <span class="stat-label">SD kg CO₂e per transaction</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="contextualizing-the-carbon" class="slide level2">
+<h2>Contextualizing the carbon</h2>
+<div class="hero-stat">
+<p><span class="stat-number"><span id="total_co2_ctx" class="shiny-text-output"></span></span></p>
+<p><span class="stat-label">kg CO₂e total emissions</span></p>
+</div>
+<ul>
+<li>Equivalent to driving a gas-powered car roughly <strong>2.3 million miles</strong></li>
+<li>Same as the annual electricity use of around <strong>190 U.S. homes</strong></li>
+<li>Would take about <strong>914 acres of U.S. forests</strong> a full year to sequester</li>
+<li>Roughly <strong>73,000,000 smartphones charged</strong>
+<ul>
+<li>Source: EPA <a href="https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator#results">Greenhouse Gas Equivalencies Calculator</a></li>
+</ul></li>
 </ul>
 </section>
 <section id="emissions-by-office-distribution" class="slide level2 smaller">
@@ -305,10 +347,23 @@ PALETTE <- c(
  
 <script type="application/shiny-prerendered" data-context="server">
 data_pull <- eventReactive(input$refresh, {
-  con <- db_connect()
+  required <- c("SUPABASE_HOST", "SUPABASE_USER", "SUPABASE_PASSWORD")
+  missing  <- required[Sys.getenv(required) == ""]
+  if (length(missing)) {
+    stop(safeError(paste(
+      "Missing env vars on the server:", paste(missing, collapse = ", "),
+      "- set these in Posit Connect Cloud → Variables and redeploy."
+    )))
+  }
+
+  con <- tryCatch(db_connect(), error = function(e) {
+    stop(safeError(paste("DB connect failed:", conditionMessage(e))))
+  })
   on.exit(dbDisconnect(con), add = TRUE)
 
-  emissions <- dbGetQuery(con, EMISSIONS_SQL)
+  emissions <- tryCatch(dbGetQuery(con, EMISSIONS_SQL), error = function(e) {
+    stop(safeError(paste("Query failed:", conditionMessage(e))))
+  })
 
   agg <- emissions |>
     group_by(office, category) |>
@@ -337,8 +392,13 @@ output$fetched_at <- renderText({
   paste0("Last refreshed: ", format(data_pull()$fetched_at, "%Y-%m-%d %H:%M:%S"))
 })
 
-output$tx_count  <- renderText(format(nrow(data_pull()$emissions), big.mark = ","))
-output$total_co2 <- renderText(format(round(sum(data_pull()$emissions$co2e)), big.mark = ","))
+output$tx_count   <- renderText(format(nrow(data_pull()$emissions), big.mark = ","))
+output$total_co2  <- renderText(format(round(sum(data_pull()$emissions$co2e)), big.mark = ","))
+output$total_co2_ctx <- renderText(format(round(sum(data_pull()$emissions$co2e)), big.mark = ","))
+output$total_cost <- renderText(paste0("$", format(round(sum(data_pull()$emissions$cost, na.rm = TRUE)), big.mark = ",")))
+output$mean_co2   <- renderText(format(round(mean(data_pull()$emissions$co2e, na.rm = TRUE), 1), big.mark = ","))
+output$p90_co2    <- renderText(format(round(quantile(data_pull()$emissions$co2e, 0.9, na.rm = TRUE), 1), big.mark = ","))
+output$sd_co2     <- renderText(format(round(sd(data_pull()$emissions$co2e, na.rm = TRUE), 1), big.mark = ","))
 
 output$boxplot <- renderPlot({
   positive <- data_pull()$emissions |>
@@ -474,6 +534,7 @@ ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="www/eja_logo.png" class="slide-logo"></p>
 <div class="footer footer-default">
 
 </div>
@@ -653,7 +714,7 @@ ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1280,
+        width: 1050,
 
         height: 800,
 
