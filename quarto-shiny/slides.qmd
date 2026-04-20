@@ -169,6 +169,62 @@ output$boxplot <- renderPlot({
           plot.title.position = "plot")
 })
 
+output$share_by_office <- renderPlot({
+  oo <- office_order()
+  totals <- data_pull()$emissions |>
+    filter(co2e > 0, cost > 0) |>
+    group_by(office) |>
+    summarise(spend = sum(cost, na.rm = TRUE),
+              co2e  = sum(co2e, na.rm = TRUE), .groups = "drop") |>
+    mutate(`Share of spend`    = spend / sum(spend),
+           `Share of emissions`= co2e  / sum(co2e)) |>
+    select(office, `Share of spend`, `Share of emissions`) |>
+    pivot_longer(-office, names_to = "metric", values_to = "share") |>
+    mutate(office = factor(office, levels = rev(oo)),
+           metric = factor(metric, levels = c("Share of spend", "Share of emissions")))
+
+  ggplot(totals, aes(x = share, y = office, fill = metric)) +
+    geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_fill_manual(values = c("Share of spend" = "#8ab17d",
+                                 "Share of emissions" = "#bc4749")) +
+    labs(x = NULL, y = NULL, fill = NULL,
+         title = "Share of spend vs. share of emissions, by office",
+         subtitle = "Offices where the red bar exceeds the green bar punch above their spending weight on carbon") +
+    theme_minimal(base_size = 12) +
+    theme(legend.position = "top",
+          plot.title.position = "plot",
+          panel.grid.major.y = element_blank())
+})
+
+output$intensity_by_category <- renderPlot({
+  int_df <- data_pull()$emissions |>
+    filter(co2e > 0, cost > 0) |>
+    group_by(category) |>
+    summarise(spend = sum(cost, na.rm = TRUE),
+              co2e  = sum(co2e, na.rm = TRUE), .groups = "drop") |>
+    mutate(intensity = co2e / spend) |>
+    arrange(intensity) |>
+    mutate(category = factor(category, levels = category))
+
+  overall <- sum(int_df$co2e) / sum(int_df$spend)
+
+  ggplot(int_df, aes(x = intensity, y = category, fill = category)) +
+    geom_col(width = 0.7) +
+    geom_vline(xintercept = overall, linetype = "dashed", colour = "#333333") +
+    annotate("text", x = overall, y = 0.7,
+             label = sprintf("overall avg: %.2f kg/$", overall),
+             hjust = -0.05, vjust = 0, size = 3.5, colour = "#333333") +
+    scale_fill_manual(values = PALETTE, guide = "none") +
+    scale_x_continuous(labels = label_comma()) +
+    labs(x = "kg CO2e per dollar spent", y = NULL,
+         title = "Carbon intensity by expenditure category",
+         subtitle = "How much CO2e each dollar buys, summed across all offices") +
+    theme_minimal(base_size = 12) +
+    theme(plot.title.position = "plot",
+          panel.grid.major.y = element_blank())
+})
+
 output$stacked <- renderPlot({
   oo <- office_order(); co <- category_order()
   stack_df <- data_pull()$agg |>
@@ -321,18 +377,6 @@ textOutput("fetched_at", inline = TRUE)
 
 ------------------------------------------------------------------------
 
-## Emissions by office --- distribution {.smaller}
-
-```{r}
-plotOutput("boxplot", height = "520px")
-```
-
-::: aside
-Offices ordered by total CO~2~e (highest at top). Zero / negative values excluded from log axis.
-:::
-
-------------------------------------------------------------------------
-
 ## Total emissions by office --- stacked by category {.smaller}
 
 ```{r}
@@ -350,6 +394,42 @@ Stacks ordered (bottom → top) by global category total.
 ```{r}
 plotlyOutput("sankey", height = "640px")
 ```
+
+---
+
+## Emissions by office --- distribution {.smaller}
+
+```{r}
+plotOutput("boxplot", height = "520px")
+```
+
+::: aside
+Offices ordered by total CO~2~e (highest at top). Zero / negative values excluded from log axis.
+:::
+
+------------------------------------------------------------------------
+
+## Spend share vs. emissions share, by office {.smaller}
+
+```{r}
+plotOutput("share_by_office", height = "560px")
+```
+
+::: aside
+Each office's share of total spend (green) vs. share of total emissions (red). Red > green means the office is more carbon-intensive than its spending alone would suggest.
+:::
+
+------------------------------------------------------------------------
+
+## Carbon intensity by category {.smaller}
+
+```{r}
+plotOutput("intensity_by_category", height = "520px")
+```
+
+::: aside
+kg CO~2~e per dollar spent, category totals. Dashed line is the overall average across all transactions.
+:::
 
 ------------------------------------------------------------------------
 

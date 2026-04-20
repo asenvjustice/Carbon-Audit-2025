@@ -236,17 +236,6 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </ul></li>
 </ul>
 </section>
-<section id="emissions-by-office-distribution" class="slide level2 smaller center">
-<h2>Emissions by office — distribution</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div class="shiny-plot-output html-fill-item" id="boxplot" style="width:100%;height:520px;"></div>
-</div>
-</div>
-
-<aside><div>
-<p>Offices ordered by total CO<sub>2</sub>e (highest at top). Zero / negative values excluded from log axis.</p>
-</div></aside></section>
 <section id="total-emissions-by-office-stacked-by-category" class="slide level2 smaller center">
 <h2>Total emissions by office — stacked by category</h2>
 <div class="cell">
@@ -266,6 +255,39 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </div>
 </div>
 </section>
+<section id="emissions-by-office-distribution" class="slide level2 smaller center">
+<h2>Emissions by office — distribution</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="shiny-plot-output html-fill-item" id="boxplot" style="width:100%;height:520px;"></div>
+</div>
+</div>
+
+<aside><div>
+<p>Offices ordered by total CO<sub>2</sub>e (highest at top). Zero / negative values excluded from log axis.</p>
+</div></aside></section>
+<section id="spend-share-vs.-emissions-share-by-office" class="slide level2 smaller center">
+<h2>Spend share vs.&nbsp;emissions share, by office</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="shiny-plot-output html-fill-item" id="share_by_office" style="width:100%;height:560px;"></div>
+</div>
+</div>
+
+<aside><div>
+<p>Each office’s share of total spend (green) vs.&nbsp;share of total emissions (red). Red &gt; green means the office is more carbon-intensive than its spending alone would suggest.</p>
+</div></aside></section>
+<section id="carbon-intensity-by-category" class="slide level2 smaller center">
+<h2>Carbon intensity by category</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="shiny-plot-output html-fill-item" id="intensity_by_category" style="width:100%;height:520px;"></div>
+</div>
+</div>
+
+<aside><div>
+<p>kg CO<sub>2</sub>e per dollar spent, category totals. Dashed line is the overall average across all transactions.</p>
+</div></aside></section>
 <section id="takeaways" class="slide level2 center">
 <h2>Takeaways</h2>
 <ul>
@@ -420,6 +442,62 @@ output$boxplot <- renderPlot({
           plot.title.position = "plot")
 })
 
+output$share_by_office <- renderPlot({
+  oo <- office_order()
+  totals <- data_pull()$emissions |>
+    filter(co2e > 0, cost > 0) |>
+    group_by(office) |>
+    summarise(spend = sum(cost, na.rm = TRUE),
+              co2e  = sum(co2e, na.rm = TRUE), .groups = "drop") |>
+    mutate(`Share of spend`    = spend / sum(spend),
+           `Share of emissions`= co2e  / sum(co2e)) |>
+    select(office, `Share of spend`, `Share of emissions`) |>
+    pivot_longer(-office, names_to = "metric", values_to = "share") |>
+    mutate(office = factor(office, levels = rev(oo)),
+           metric = factor(metric, levels = c("Share of spend", "Share of emissions")))
+
+  ggplot(totals, aes(x = share, y = office, fill = metric)) +
+    geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+    scale_x_continuous(labels = percent_format(accuracy = 1)) +
+    scale_fill_manual(values = c("Share of spend" = "#8ab17d",
+                                 "Share of emissions" = "#bc4749")) +
+    labs(x = NULL, y = NULL, fill = NULL,
+         title = "Share of spend vs. share of emissions, by office",
+         subtitle = "Offices where the red bar exceeds the green bar punch above their spending weight on carbon") +
+    theme_minimal(base_size = 12) +
+    theme(legend.position = "top",
+          plot.title.position = "plot",
+          panel.grid.major.y = element_blank())
+})
+
+output$intensity_by_category <- renderPlot({
+  int_df <- data_pull()$emissions |>
+    filter(co2e > 0, cost > 0) |>
+    group_by(category) |>
+    summarise(spend = sum(cost, na.rm = TRUE),
+              co2e  = sum(co2e, na.rm = TRUE), .groups = "drop") |>
+    mutate(intensity = co2e / spend) |>
+    arrange(intensity) |>
+    mutate(category = factor(category, levels = category))
+
+  overall <- sum(int_df$co2e) / sum(int_df$spend)
+
+  ggplot(int_df, aes(x = intensity, y = category, fill = category)) +
+    geom_col(width = 0.7) +
+    geom_vline(xintercept = overall, linetype = "dashed", colour = "#333333") +
+    annotate("text", x = overall, y = 0.7,
+             label = sprintf("overall avg: %.2f kg/$", overall),
+             hjust = -0.05, vjust = 0, size = 3.5, colour = "#333333") +
+    scale_fill_manual(values = PALETTE, guide = "none") +
+    scale_x_continuous(labels = label_comma()) +
+    labs(x = "kg CO2e per dollar spent", y = NULL,
+         title = "Carbon intensity by expenditure category",
+         subtitle = "How much CO2e each dollar buys, summed across all offices") +
+    theme_minimal(base_size = 12) +
+    theme(plot.title.position = "plot",
+          panel.grid.major.y = element_blank())
+})
+
 output$stacked <- renderPlot({
   oo <- office_order(); co <- category_order()
   stack_df <- data_pull()$agg |>
@@ -522,7 +600,7 @@ ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
 </ul>
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="dependencies">
-{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.6.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.6.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["plotly-binding"]},{"type":"character","attributes":{},"value":["4.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["plotly.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["plotly"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["4.12.0"]}]}]}
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.6.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.6.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["plotly-binding"]},{"type":"character","attributes":{},"value":["4.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["plotly.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["plotly"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["4.12.0"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]}]}
 </script>
 <!--/html_preserve-->
 <!--html_preserve-->
