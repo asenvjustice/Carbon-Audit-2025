@@ -40,9 +40,25 @@ $link-color: $light-green;
 
 .reveal p,
 .reveal li {
-  font-size: 0.85em;
-  line-height: 1.35;
+  font-size: 1.05em;
+  line-height: 1.5;
 }
+
+.reveal ul,
+.reveal ol {
+  margin: 0.4em 0;
+}
+
+.reveal ul > li,
+.reveal ol > li {
+  margin-bottom: 0.55em;
+}
+
+.reveal li > ul,
+.reveal li > ol {
+  margin-top: 0.45em;
+}
+
 
 .reveal h1,
 .reveal h2,
@@ -136,75 +152,6 @@ html body img.slide-logo {
   font-size: 0.7em !important;
 }
 
-// Hero "big number" stat cards — two columns of stacked stats, Garamond
-// numbers with Lato captions beneath.
-.reveal .stats-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 4rem;
-  width: 100%;
-  margin: 1.5rem 0;
-}
-
-.reveal .stats-row > *,
-.reveal .stats-col > * {
-  margin: 0 !important;
-}
-
-.reveal .stats-col {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.reveal .stat {
-  text-align: center;
-  padding: 0.35rem 0.5rem;
-}
-
-.reveal .stat-number {
-  display: block;
-  font-family: $Cormorant_Garamond !important;
-  font-weight: 500;
-  font-size: 3.8em;
-  line-height: 1;
-  color: $cream;
-  margin-bottom: 0.3rem;
-}
-
-.reveal .stat-number .shiny-text-output {
-  display: inline;
-}
-
-.reveal .stat-label {
-  display: block;
-  font-family: $Lato !important;
-  font-size: 0.75em;
-  font-weight: 300;
-  letter-spacing: 0.03em;
-  color: rgba(253, 251, 247, 0.85);
-}
-
-// Single hero stat — centered big number at top of a slide, label beneath.
-.reveal .hero-stat {
-  text-align: center;
-  margin: 0.5rem auto 1.75rem auto;
-}
-
-.reveal .hero-stat .stat-number {
-  font-size: 6em;
-  margin-bottom: 0.4rem;
-}
-
-.reveal .hero-stat .stat-label {
-  font-size: 0.95em;
-}
-
 // Table outputs get the same treatment so they don't float on green.
 .reveal table {
   background-color: $cream;
@@ -212,3 +159,28 @@ html body img.slide-logo {
   border-radius: 8px;
   overflow: hidden;
 }
+
+.reveal .stats-row {               
+    display: flex;
+    gap: 3rem;
+    justify-content: center;         
+    align-items: stretch;
+    margin-top: 2rem;                
+  } 
+
+.reveal .stat {
+    flex: 1;                         
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(253, 251, 247,  
+  0.08);
+    border-radius: 12px;             
+  }               
+.reveal .stat-number {
+    display: block;
+    font-family: $Cormorant_Garamond;
+    font-size: 5em;                  
+    line-height: 1;
+    color: $cream;                   
+    margin-bottom: 0.4rem;           
+  }

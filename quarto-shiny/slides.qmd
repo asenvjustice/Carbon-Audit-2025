@@ -10,6 +10,7 @@ format:
     resources:
       - www/eja_logo.png
     incremental: false
+    center: true
     height: 800
     fig-align: center
     echo: false
