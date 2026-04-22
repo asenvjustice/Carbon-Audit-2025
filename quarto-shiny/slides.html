@@ -6,11 +6,11 @@
 <script src="slides_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="slides_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="slides_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-dark-b651517ce65839d647a86e2780455cfb.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.8.24">
+<link href="slides_files/libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.37">
 
   <meta name="author" content="Amy Zhao, Director of Research and Data Analytics   Ji Moon, Technical Projects Coordinator   Dhruv S. Kannan, Associate Vice President   Office of Environmental Justice Affairs">
-  <meta name="dcterms.date" content="2026-04-20">
+  <meta name="dcterms.date" content="2026-04-22">
   <title>AS Carbon Audit 2024-2025</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,6 +18,9 @@
   <link rel="stylesheet" href="slides_files/libs/revealjs/dist/reset.css">
   <link rel="stylesheet" href="slides_files/libs/revealjs/dist/reveal.css">
   <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -30,7 +33,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto-9d4d91f8f757ff9e771edaf927146de0.css">
+  <link rel="stylesheet" href="slides_files/libs/revealjs/dist/theme/quarto-5d5aab625c46afd549057cc7a14c65b8.css">
   <link href="slides_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="slides_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="slides_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -138,7 +141,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </div>
 </div>
 
-  <p class="date">2026-04-20</p>
+  <p class="date">2026-04-22</p>
 </section>
 <section id="live-data" class="slide level2 smaller center">
 <h2>Live data</h2>
@@ -318,44 +321,15 @@ db_connect <- function() {
   )
 }
 
-# Real per-transaction emissions live in `<office>_2024_2025.carbon_emission`.
+# Real per-transaction emissions live in `climatiq`.
 # Every schema has a `category` column populated with one of the 7 canonical
-# categories. All queries exclude rows flagged `remove = true`.
-OFFICE_SCHEMAS <- c(
-  "ASCE"                           = "asce_2024_2025",
-  "ASOSA"                          = "asosa_2024_2025",
-  "CCMO"                           = "ccmo_2024_2025",
-  "CFO"                            = "cfo_2024_2025",
-  "College Affairs"                = "college_affairs_2024_2025",
-  "CPO"                            = "cpo_2024_2025",
-  "EDI"                            = "edi_2024_2025",
-  "Enterprises & Services"         = "enterprises_and_services_2024_2025",
-  "Environmental Justice Affairs"  = "environmental_justice_affairs_2024_2025",
-  "EVP"                            = "evp_2024_2025",
-  "Food & Housing"                 = "food_and_housing_2024_2025",
-  "Health & Wellbeing"             = "health_and_wellbeing_2024_2025",
-  "Local Affairs"                  = "local_affairs_2024_2025",
-  "Mandate Reserves"               = "mandate_reserves_2024_2025",
-  "Office of the President"        = "office_of_the_president_2024_2025",
-  "SSC"                            = "ssc_2024_2025",
-  "Student Advocacy"               = "student_advocacy_2024_2025",
-  "Student Orgs"                   = "student_orgs_2024_2025",
-  "Transportation & Transformation"= "transportation_and_transformation_2024_2025",
-  "TTV"                            = "ttv_2024_2025",
-  "VPAA"                           = "vpaa_2024_2025",
-  "VP External"                    = "vp_external_2024_2025"
-)
+# All queries exclude rows where 'climatiq mapping' = 'exclude'.
 
-EMISSIONS_SQL <- paste(
-  sprintf(
-    "select '%s'::text as office, category, cost, co2e
-       from %s.carbon_emission
-      where coalesce(remove, false) = false
-        and co2e is not null",
-    names(OFFICE_SCHEMAS), unname(OFFICE_SCHEMAS)
-  ),
-  collapse = "\nunion all\n"
-)
+EMISSIONS_SQL <-
+  'select "Office" as office, "climatiq mapping", category, "Cost" as cost, co2e
+     from climatiq.merged
+    where co2e is not null
+      and "climatiq mapping" != \'exclude\''
 
 PALETTE <- c(
   "Travel & Transportation" = "#d62728",
@@ -373,19 +347,18 @@ data_pull <- eventReactive(input$refresh, {
   required <- c("SUPABASE_HOST", "SUPABASE_USER", "SUPABASE_PASSWORD")
   missing  <- required[Sys.getenv(required) == ""]
   if (length(missing)) {
-    stop(safeError(paste(
-      "Missing env vars on the server:", paste(missing, collapse = ", "),
-      "- set these in Posit Connect Cloud → Variables and redeploy."
-    )))
+    stop(paste(
+      "Missing env vars:", paste(missing, collapse = ", ")
+    ))
   }
 
   con <- tryCatch(db_connect(), error = function(e) {
-    stop(safeError(paste("DB connect failed:", conditionMessage(e))))
+    stop(paste("DB connect failed:", conditionMessage(e)))
   })
   on.exit(dbDisconnect(con), add = TRUE)
 
   emissions <- tryCatch(dbGetQuery(con, EMISSIONS_SQL), error = function(e) {
-    stop(safeError(paste("Query failed:", conditionMessage(e))))
+    stop(paste("Query failed:", conditionMessage(e)))
   })
 
   agg <- emissions |>
@@ -606,7 +579,7 @@ ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62]}},"value":[{"type":"character","attributes":{},"value":["base","bit","bit64","blob","cli","compiler","data.table","datasets","DBI","digest","dplyr","evaluate","farver","fastmap","fontawesome","generics","ggplot2","glue","graphics","grDevices","grid","gtable","hms","htmltools","htmlwidgets","httpuv","httr","jsonlite","knitr","later","lazyeval","lifecycle","magrittr","methods","mime","otel","pillar","pkgconfig","plotly","promises","purrr","R6","RColorBrewer","Rcpp","rlang","rmarkdown","RPostgres","S7","scales","shiny","stats","tibble","tidyr","tidyselect","tools","utils","vctrs","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["4.5.0","4.6.0","4.6.0-1","1.3.0","3.6.5","4.5.0","1.18.2.1","4.5.0","1.3.0","0.6.39","1.2.1","1.0.5","2.1.2","1.2.0","0.5.3","0.1.4","4.0.2","1.8.0","4.5.0","4.5.0","4.5.0","0.3.6","1.1.4","0.5.9","1.6.4","1.6.17","1.4.8","2.0.0","1.51","1.4.8","0.2.3","1.0.5","2.0.5","4.5.0","0.13","0.2.0","1.11.1","2.0.3","4.12.0","1.5.0","1.2.1","2.6.1","1.1-3","1.1.1","1.2.0","2.31","1.4.10","0.2.1","1.4.0","1.13.0","4.5.0","3.3.1","1.3.2","1.2.1","4.5.0","4.5.0","0.7.2","0.4.3","3.0.2","0.57","1.8-8","2.3.12"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62]}},"value":[{"type":"character","attributes":{},"value":["base","bit","bit64","blob","cli","compiler","data.table","datasets","DBI","digest","dplyr","evaluate","farver","fastmap","fontawesome","generics","ggplot2","glue","graphics","grDevices","grid","gtable","hms","htmltools","htmlwidgets","httpuv","httr","jsonlite","knitr","later","lazyeval","lifecycle","magrittr","methods","mime","otel","pillar","pkgconfig","plotly","promises","purrr","R6","RColorBrewer","Rcpp","rlang","rmarkdown","RPostgres","S7","scales","shiny","stats","tibble","tidyr","tidyselect","tools","utils","vctrs","viridisLite","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["4.4.2","4.6.0","4.6.0-1","1.3.0","3.6.5","4.4.2","1.18.2.1","4.4.2","1.3.0","0.6.39","1.2.0","1.0.5","2.1.2","1.2.0","0.5.3","0.1.4","4.0.2","1.8.0","4.4.2","4.4.2","4.4.2","0.3.6","1.1.4","0.5.9","1.6.4","1.6.17","1.4.8","2.0.0","1.51","1.4.8","0.2.2","1.0.5","2.0.4","4.4.2","0.13","0.2.0","1.11.1","2.0.3","4.12.0","1.5.0","1.2.1","2.6.1","1.1-3","1.1.1","1.1.7","2.30","1.4.10","0.2.1","1.4.0","1.13.0","4.4.2","3.3.1","1.3.2","1.2.1","4.4.2","4.4.2","0.7.2","0.4.3","3.0.2","0.57","1.8-8","2.3.12"]}]}]}
 </script>
 <!--/html_preserve-->
 
