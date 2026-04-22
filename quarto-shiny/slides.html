@@ -144,7 +144,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
   <p class="date">2026-04-22</p>
 </section>
 <section id="live-data" class="slide level2 smaller center">
-<h2>Live data</h2>
+<h2>Live Data</h2>
 <div class="cell">
 <div class="cell-output-display">
 <button id="refresh" type="button" class="btn btn-default action-button"><span class="action-icon"><i class="fas fa-rotate" role="presentation" aria-label="rotate icon"></i></span><span class="action-label">Refresh from Supabase</span></button>
@@ -155,7 +155,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </div>
 </section>
 <section id="why-are-we-doing-this" class="slide level2 center">
-<h2>Why are we doing this?</h2>
+<h2>Why are we Doing This?</h2>
 <ul>
 <li><strong>Sustainability:</strong> making sure the needs of the present do not outweigh the needs of the future</li>
 <li>Contextualize the planet-warming potential of the Association</li>
@@ -170,16 +170,29 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </ul></li>
 </ul>
 </section>
+<section id="what-this-audit-is-not" class="slide level2 center">
+<h2>What this Audit is Not</h2>
+<ul>
+<li>An inquisition</li>
+<li>A forum to air grievances</li>
+<li>Marching orders
+<ul>
+<li>Solutions will be implemented in a collaborative, deliberative manner</li>
+</ul></li>
+</ul>
+</section>
 <section id="how-we-did-it" class="slide level2 center">
 <h2>How we did it</h2>
 <ul>
+<li>All financial details implemented in Supabase, a data management system<br>
+</li>
 <li>Use the <strong>Climatiq API</strong></li>
 <li>Two-step process:
 <ol type="1">
 <li>Feed purchase description into system, which matches it to an <strong>emissions factor</strong> (i.e., beef jerky → <code>consumer_goods-type_snack_foods</code>)</li>
 <li>System calculates <span class="math inline">\(\text{CO}_2\)</span> equivalent per purchase</li>
 </ol></li>
-<li>Use Python/R for visualizations and statistical analysis</li>
+<li>Use Python/R for visualizations and statistical analysis, with live data fetch from Supabase</li>
 </ul>
 </section>
 <section id="overview" class="slide level2 center">
@@ -197,7 +210,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </ul>
 </section>
 <section id="headline-numbers" class="slide level2 center">
-<h2>Headline numbers</h2>
+<h2>Headline Numbers</h2>
 <div class="stats-row">
 <div class="stats-col">
 <div class="stat">
@@ -224,7 +237,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </div>
 </section>
 <section id="contextualizing-the-carbon" class="slide level2 center">
-<h2>Contextualizing the carbon</h2>
+<h2>Contextualizing the Carbon</h2>
 <div class="hero-stat">
 <p><span class="stat-number"><span id="total_co2_ctx" class="shiny-text-output"></span></span></p>
 <p><span class="stat-label">kg CO₂e total emissions</span></p>
@@ -241,7 +254,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </ul>
 </section>
 <section id="total-emissions-by-office-stacked-by-category" class="slide level2 smaller center">
-<h2>Total emissions by office — stacked by category</h2>
+<h2>Total Emissions by Office — Stacked by Category</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div class="shiny-plot-output html-fill-item" id="stacked" style="width:100%;height:520px;"></div>
@@ -252,7 +265,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 <p>Stacks ordered (bottom → top) by global category total.</p>
 </div></aside></section>
 <section id="flow-office-category-sankey" class="slide level2 center">
-<h2>Flow: office → category (Sankey)</h2>
+<h2>Flow: Office → Category (Sankey)</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div class="plotly html-widget html-widget-output shiny-report-size shiny-report-theme html-fill-item" id="sankey" style="width:100%;height:640px;"></div>
@@ -260,7 +273,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 </div>
 </section>
 <section id="emissions-by-office-distribution" class="slide level2 smaller center">
-<h2>Emissions by office — distribution</h2>
+<h2>Emissions by Office — Distribution</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div class="shiny-plot-output html-fill-item" id="boxplot" style="width:100%;height:520px;"></div>
@@ -271,7 +284,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 <p>Offices ordered by total CO<sub>2</sub>e (highest at top). Zero / negative values excluded from log axis.</p>
 </div></aside></section>
 <section id="spend-share-vs.-emissions-share-by-office" class="slide level2 smaller center">
-<h2>Spend share vs.&nbsp;emissions share, by office</h2>
+<h2>Spend Share vs.&nbsp;Emissions Share, by Office</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div class="shiny-plot-output html-fill-item" id="share_by_office" style="width:100%;height:560px;"></div>
@@ -282,7 +295,7 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 <p>Each office’s share of total spend (green) vs.&nbsp;share of total emissions (red). Red &gt; green means the office is more carbon-intensive than its spending alone would suggest.</p>
 </div></aside></section>
 <section id="carbon-intensity-by-category" class="slide level2 smaller center">
-<h2>Carbon intensity by category</h2>
+<h2>Carbon Intensity by Category</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div class="shiny-plot-output html-fill-item" id="intensity_by_category" style="width:100%;height:520px;"></div>
@@ -298,7 +311,42 @@ Amy Zhao, Director of Research and Data Analytics <br> Ji Moon, Technical Projec
 <li><strong>Travel &amp; Transportation</strong> and <strong>Professional Services</strong> dominate totals at VP External and Transportation &amp; Transformation.</li>
 <li><strong>ASCE</strong> has the largest and most dispersed per-transaction distribution — many small Events and Equipment rentals plus a long outlier tail.</li>
 <li><strong>Equipment &amp; Rentals</strong> is the largest single category by transaction count.</li>
-<li>Negative / zero <code>co2e</code> rows (credits, reversals, unmapped) were excluded from the log-scale view and shown as Uncategorized in totals. 
+<li>Negative / zero <code>co2e</code> rows (credits, reversals, unmapped) were excluded from the log-scale view and shown as Uncategorized in totals.</li>
+</ul>
+</section>
+<section id="potential-solutions" class="slide level2 center">
+<h2>Potential Solutions</h2>
+<ol type="1">
+<li>Reduce Amazon spending</li>
+<li>Identify more sustainable travel options</li>
+<li>For flights: utilize carbon forecasts online to identify better options:</li>
+<li>Earlier flights</li>
+<li>Newer aircraft</li>
+<li>Fuel-efficient vehicles</li>
+</ol>
+</section>
+<section id="next-steps" class="slide level2 center">
+<h2>Next Steps</h2>
+<ul>
+<li>EJA + SSC – implement <strong>Waste Reduction Protocols</strong>
+<ul>
+<li>Identify sustainable alternatives to Amazon purchases</li>
+<li>Target: <strong>end of the school year</strong></li>
+</ul></li>
+<li>EJA + Senate Special Committee on Environmental Justice - identify opportunities for carbon offsets, reinvesting in green initiatives
+<ul>
+<li>Revive SSC’s Green Initiative Fund to fund student-powered sustainability projects, use A.S. institutional position and funding to implement as necessary</li>
+</ul></li>
+<li>Conversations to come!</li>
+</ul>
+</section>
+<section id="thank-you" class="slide level2 center">
+<h2>Thank you!</h2>
+<p>Questions? Reach out to Dhruv on Slack. This presentation will be shared for review and will be pushed online when possible.</p>
+</section>
+<section class="slide level2 center">
+
+<p>
 <script type="application/shiny-prerendered" data-context="server-start">
 library(shiny)
 library(DBI)
@@ -499,17 +547,32 @@ output$sankey <- renderPlotly({
   sankey_agg <- data_pull()$agg |> filter(co2e > 0)
   oo <- sankey_agg |> group_by(office) |> summarise(co2e = sum(co2e), .groups = "drop") |> arrange(desc(co2e)) |> pull(office)
   co <- sankey_agg |> group_by(category) |> summarise(co2e = sum(co2e), .groups = "drop") |> arrange(desc(co2e)) |> pull(category)
-  n_o <- length(oo); n_c <- length(co)
+  n_off <- length(oo); n_cat <- length(co)
   nodes       <- c(oo, co)
   node_index  <- setNames(seq_along(nodes) - 1L, nodes)
   cat_cols    <- unname(PALETTE[co]); cat_cols[is.na(cat_cols)] <- "#cccccc"
-  node_colors <- c(rep("#1b4332", n_o), cat_cols)
+  node_colors <- c(rep("#1b4332", n_off), cat_cols)
 
-  # offices on left (x=0.01) top→bottom = biggest→smallest
-  # categories on right (x=0.99) top→bottom = biggest→smallest
-  node_x <- c(rep(0.01, n_o), rep(0.99, n_c))
-  node_y <- c(seq(0.01, 0.99, length.out = n_o),
-               seq(0.01, 0.99, length.out = n_c))
+  mix <- 0.4
+
+  office_sizes  <- sankey_agg |> group_by(office) |> summarise(co2e = sum(co2e), .groups = "drop") |>
+    arrange(match(office, oo)) |> pull(co2e)
+  office_props  <- office_sizes / sum(office_sizes)
+  office_cumy   <- c(0, cumsum(office_props))
+  office_y_prop <- (office_cumy[-length(office_cumy)] + office_cumy[-1]) / 2
+  office_y_even <- seq(0, 1, length.out = n_off)
+  office_y      <- 0.02 + (mix * office_y_prop + (1 - mix) * office_y_even) * 0.96
+
+  cat_sizes  <- sankey_agg |> group_by(category) |> summarise(co2e = sum(co2e), .groups = "drop") |>
+    arrange(match(category, co)) |> pull(co2e)
+  cat_props  <- cat_sizes / sum(cat_sizes)
+  cat_cumy   <- c(0, cumsum(cat_props))
+  cat_y_prop <- (cat_cumy[-length(cat_cumy)] + cat_cumy[-1]) / 2
+  cat_y_even <- seq(0, 1, length.out = n_cat)
+  cat_y      <- 0.02 + (mix * cat_y_prop + (1 - mix) * cat_y_even) * 0.96
+
+  node_x <- c(rep(0.001, n_off), rep(0.999, n_cat))
+  node_y <- c(office_y, cat_y)
 
   hex_to_rgba <- function(h, a = 0.45) {
     h <- sub("^#", "", h)
@@ -582,8 +645,7 @@ ojs_define <- function(..., .session = shiny::getDefaultReactiveDomain()) {
   invisible()
 }
 </script>
-</li>
-</ul>
+</p>
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="dependencies">
 {"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"character","attributes":{},"value":["1.6.4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmlwidgets"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.6.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["plotly-binding"]},{"type":"character","attributes":{},"value":["4.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["htmlwidgets"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["plotly.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["plotly"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["4.12.0"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["htmltools-fill"]},{"type":"character","attributes":{},"value":["0.5.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fill"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fill.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["htmltools"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.9"]}]}]}
