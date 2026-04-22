@@ -222,17 +222,32 @@ output$sankey <- renderPlotly({
   sankey_agg <- data_pull()$agg |> filter(co2e > 0)
   oo <- sankey_agg |> group_by(office) |> summarise(co2e = sum(co2e), .groups = "drop") |> arrange(desc(co2e)) |> pull(office)
   co <- sankey_agg |> group_by(category) |> summarise(co2e = sum(co2e), .groups = "drop") |> arrange(desc(co2e)) |> pull(category)
-  n_o <- length(oo); n_c <- length(co)
+  n_off <- length(oo); n_cat <- length(co)
   nodes       <- c(oo, co)
   node_index  <- setNames(seq_along(nodes) - 1L, nodes)
   cat_cols    <- unname(PALETTE[co]); cat_cols[is.na(cat_cols)] <- "#cccccc"
-  node_colors <- c(rep("#1b4332", n_o), cat_cols)
+  node_colors <- c(rep("#1b4332", n_off), cat_cols)
 
-  # offices on left (x=0.01) top→bottom = biggest→smallest
-  # categories on right (x=0.99) top→bottom = biggest→smallest
-  node_x <- c(rep(0.01, n_o), rep(0.99, n_c))
-  node_y <- c(seq(0.01, 0.99, length.out = n_o),
-               seq(0.01, 0.99, length.out = n_c))
+  mix <- 0.4
+
+  office_sizes  <- sankey_agg |> group_by(office) |> summarise(co2e = sum(co2e), .groups = "drop") |>
+    arrange(match(office, oo)) |> pull(co2e)
+  office_props  <- office_sizes / sum(office_sizes)
+  office_cumy   <- c(0, cumsum(office_props))
+  office_y_prop <- (office_cumy[-length(office_cumy)] + office_cumy[-1]) / 2
+  office_y_even <- seq(0, 1, length.out = n_off)
+  office_y      <- 0.02 + (mix * office_y_prop + (1 - mix) * office_y_even) * 0.96
+
+  cat_sizes  <- sankey_agg |> group_by(category) |> summarise(co2e = sum(co2e), .groups = "drop") |>
+    arrange(match(category, co)) |> pull(co2e)
+  cat_props  <- cat_sizes / sum(cat_sizes)
+  cat_cumy   <- c(0, cumsum(cat_props))
+  cat_y_prop <- (cat_cumy[-length(cat_cumy)] + cat_cumy[-1]) / 2
+  cat_y_even <- seq(0, 1, length.out = n_cat)
+  cat_y      <- 0.02 + (mix * cat_y_prop + (1 - mix) * cat_y_even) * 0.96
+
+  node_x <- c(rep(0.001, n_off), rep(0.999, n_cat))
+  node_y <- c(office_y, cat_y)
 
   hex_to_rgba <- function(h, a = 0.45) {
     h <- sub("^#", "", h)
