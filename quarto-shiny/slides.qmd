@@ -43,44 +43,15 @@ db_connect <- function() {
   )
 }
 
-# Real per-transaction emissions live in `<office>_2024_2025.carbon_emission`.
+# Real per-transaction emissions live in `climatiq`.
 # Every schema has a `category` column populated with one of the 7 canonical
-# categories. All queries exclude rows flagged `remove = true`.
-OFFICE_SCHEMAS <- c(
-  "ASCE"                           = "asce_2024_2025",
-  "ASOSA"                          = "asosa_2024_2025",
-  "CCMO"                           = "ccmo_2024_2025",
-  "CFO"                            = "cfo_2024_2025",
-  "College Affairs"                = "college_affairs_2024_2025",
-  "CPO"                            = "cpo_2024_2025",
-  "EDI"                            = "edi_2024_2025",
-  "Enterprises & Services"         = "enterprises_and_services_2024_2025",
-  "Environmental Justice Affairs"  = "environmental_justice_affairs_2024_2025",
-  "EVP"                            = "evp_2024_2025",
-  "Food & Housing"                 = "food_and_housing_2024_2025",
-  "Health & Wellbeing"             = "health_and_wellbeing_2024_2025",
-  "Local Affairs"                  = "local_affairs_2024_2025",
-  "Mandate Reserves"               = "mandate_reserves_2024_2025",
-  "Office of the President"        = "office_of_the_president_2024_2025",
-  "SSC"                            = "ssc_2024_2025",
-  "Student Advocacy"               = "student_advocacy_2024_2025",
-  "Student Orgs"                   = "student_orgs_2024_2025",
-  "Transportation & Transformation"= "transportation_and_transformation_2024_2025",
-  "TTV"                            = "ttv_2024_2025",
-  "VPAA"                           = "vpaa_2024_2025",
-  "VP External"                    = "vp_external_2024_2025"
-)
+# All queries exclude rows where 'climatiq mapping' = 'exclude'.
 
-EMISSIONS_SQL <- paste(
-  sprintf(
-    "select '%s'::text as office, category, cost, co2e
-       from %s.carbon_emission
-      where coalesce(remove, false) = false
-        and co2e is not null",
-    names(OFFICE_SCHEMAS), unname(OFFICE_SCHEMAS)
-  ),
-  collapse = "\nunion all\n"
-)
+EMISSIONS_SQL <-
+  'select "Office" as office, "climatiq mapping", category, "Cost" as cost, co2e
+     from climatiq.merged
+    where co2e is not null
+      and "climatiq mapping" != \'exclude\''
 
 PALETTE <- c(
   "Travel & Transportation" = "#d62728",
@@ -99,19 +70,18 @@ data_pull <- eventReactive(input$refresh, {
   required <- c("SUPABASE_HOST", "SUPABASE_USER", "SUPABASE_PASSWORD")
   missing  <- required[Sys.getenv(required) == ""]
   if (length(missing)) {
-    stop(safeError(paste(
-      "Missing env vars on the server:", paste(missing, collapse = ", "),
-      "- set these in Posit Connect Cloud → Variables and redeploy."
-    )))
+    stop(paste(
+      "Missing env vars:", paste(missing, collapse = ", ")
+    ))
   }
 
   con <- tryCatch(db_connect(), error = function(e) {
-    stop(safeError(paste("DB connect failed:", conditionMessage(e))))
+    stop(paste("DB connect failed:", conditionMessage(e)))
   })
   on.exit(dbDisconnect(con), add = TRUE)
 
   emissions <- tryCatch(dbGetQuery(con, EMISSIONS_SQL), error = function(e) {
-    stop(safeError(paste("Query failed:", conditionMessage(e))))
+    stop(paste("Query failed:", conditionMessage(e)))
   })
 
   agg <- emissions |>
