@@ -369,11 +369,11 @@ textOutput("fetched_at", inline = TRUE)
 [kg CO₂e total emissions]{.stat-label}
 :::
 
--   Equivalent to driving a gas-powered car roughly **2.3 million miles**
--   Same as the annual electricity use of around **190 U.S. homes**
--   Would take about **914 acres of U.S. forests** a full year to sequester
+-   Equivalent to driving a gas-powered car roughly **730,000 miles**
+-   Same as the annual electricity use of around **40 U.S. homes**
+-   Would take about **286 acres of U.S. forests** a full year to sequester
 -   417 round trips from SD to NY
--   Roughly **73,000,000 smartphones charged**
+-   Roughly **23,000,000 smartphones charged**
     -   Source: EPA [Greenhouse Gas Equivalencies Calculator](https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator#results)
 
 ------------------------------------------------------------------------
