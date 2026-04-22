@@ -254,7 +254,7 @@ output$sankey <- renderPlotly({
 })
 ```
 
-## Live data {.smaller}
+## Live Data {.smaller}
 
 ```{r}
 actionButton("refresh", "Refresh from Supabase", icon = icon("rotate"))
@@ -263,7 +263,7 @@ textOutput("fetched_at", inline = TRUE)
 
 ------------------------------------------------------------------------
 
-## Why are we doing this?
+## Why are we Doing This?
 
 -   **Sustainability:** making sure the needs of the present do not outweigh the needs of the future
 -   Contextualize the planet-warming potential of the Association
@@ -275,13 +275,23 @@ textOutput("fetched_at", inline = TRUE)
 
 ------------------------------------------------------------------------
 
+## What this Audit is Not
+
+- An inquisition
+- A forum to air grievances
+- Marching orders
+  - Solutions will be implemented in a collaborative, deliberative manner
+
+------------------------------------------------------------------------
+
 ## How we did it
 
--   Use the **Climatiq API**
+- All financial details implemented in Supabase, a data management system  
+- Use the **Climatiq API**
 -   Two-step process:
     1.  Feed purchase description into system, which matches it to an **emissions factor** (i.e., beef jerky → `consumer_goods-type_snack_foods`)
     2.  System calculates $\text{CO}_2$ equivalent per purchase
--   Use Python/R for visualizations and statistical analysis
+-   Use Python/R for visualizations and statistical analysis, with live data fetch from Supabase
 
 ------------------------------------------------------------------------
 
@@ -297,7 +307,7 @@ textOutput("fetched_at", inline = TRUE)
 
 ------------------------------------------------------------------------
 
-## Headline numbers
+## Headline Numbers
 
 ::::::::::: stats-row
 :::::: stats-col
@@ -331,7 +341,7 @@ textOutput("fetched_at", inline = TRUE)
 
 ------------------------------------------------------------------------
 
-## Contextualizing the carbon
+## Contextualizing the Carbon
 
 ::: hero-stat
 [`r textOutput("total_co2_ctx", inline = TRUE)`]{.stat-number}
@@ -348,7 +358,7 @@ textOutput("fetched_at", inline = TRUE)
 
 ------------------------------------------------------------------------
 
-## Total emissions by office --- stacked by category {.smaller}
+## Total Emissions by Office --- Stacked by Category {.smaller}
 
 ```{r}
 plotOutput("stacked", height = "520px")
@@ -360,7 +370,7 @@ Stacks ordered (bottom → top) by global category total.
 
 ------------------------------------------------------------------------
 
-## Flow: office → category (Sankey)
+## Flow: Office → Category (Sankey)
 
 ```{r}
 plotlyOutput("sankey", height = "640px")
@@ -368,7 +378,7 @@ plotlyOutput("sankey", height = "640px")
 
 ---
 
-## Emissions by office --- distribution {.smaller}
+## Emissions by Office --- Distribution {.smaller}
 
 ```{r}
 plotOutput("boxplot", height = "520px")
@@ -380,7 +390,7 @@ Offices ordered by total CO~2~e (highest at top). Zero / negative values exclude
 
 ------------------------------------------------------------------------
 
-## Spend share vs. emissions share, by office {.smaller}
+## Spend Share vs. Emissions Share, by Office {.smaller}
 
 ```{r}
 plotOutput("share_by_office", height = "560px")
@@ -392,7 +402,7 @@ Each office's share of total spend (green) vs. share of total emissions (red). R
 
 ------------------------------------------------------------------------
 
-## Carbon intensity by category {.smaller}
+## Carbon Intensity by Category {.smaller}
 
 ```{r}
 plotOutput("intensity_by_category", height = "520px")
@@ -410,3 +420,34 @@ kg CO~2~e per dollar spent, category totals. Dashed line is the overall average 
 -   **ASCE** has the largest and most dispersed per-transaction distribution --- many small Events and Equipment rentals plus a long outlier tail.
 -   **Equipment & Rentals** is the largest single category by transaction count.
 -   Negative / zero `co2e` rows (credits, reversals, unmapped) were excluded from the log-scale view and shown as Uncategorized in totals.
+
+------------------------------------------------------------------------
+
+## Potential Solutions
+
+1. Reduce Amazon spending
+2. Identify more sustainable travel options
+  - Book flights well in advance
+  - Utilize carbon forecasts online to identify better options:
+    - Earlier flights
+    - Newer aircraft
+    - Fuel-efficient vehicles
+
+------------------------------------------------------------------------
+
+## Next Steps
+
+- EJA + SSC -- implement **Waste Reduction Protocols**
+  - Identify sustainable alternatives to Amazon purchases
+  - Target: **end of the school year**
+- EJA + Senate Special Committee on Environmental Justice - identify opportunities for carbon offsets, reinvesting in green initiatives
+  - Revive SSC's Green Initiative Fund to fund student-powered sustainability projects, use A.S. institutional position and funding to implement as necessary
+- Conversations to come! 
+
+------------------------------------------------------------------------
+
+## Thank you!
+
+Questions? Reach out to Dhruv on Slack. This presentation will be shared for review and will be pushed online when possible.
+
+------------------------------------------------------------------------
