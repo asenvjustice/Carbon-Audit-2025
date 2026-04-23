@@ -304,17 +304,17 @@ textOutput("fetched_at", inline = TRUE)
 
 ## What this Audit is Not
 
-- An inquisition
-- A forum to air grievances
-- Marching orders
-  - Solutions will be implemented in a collaborative, deliberative manner
+-   An inquisition
+-   A forum to air grievances
+-   Marching orders
+    -   Solutions will be implemented in a collaborative, deliberative manner
 
 ------------------------------------------------------------------------
 
 ## How we did it
 
-- All financial details implemented in Supabase, a data management system  
-- Use the **Climatiq API**
+-   All financial details implemented in Supabase, a data management system\
+-   Use the **Climatiq API**
 -   Two-step process:
     1.  Feed purchase description into system, which matches it to an **emissions factor** (i.e., beef jerky → `consumer_goods-type_snack_foods`)
     2.  System calculates $\text{CO}_2$ equivalent per purchase
@@ -376,11 +376,10 @@ textOutput("fetched_at", inline = TRUE)
 [kg CO₂e total emissions]{.stat-label}
 :::
 
--   Equivalent to driving a gas-powered car roughly **730,000 miles**
--   Same as the annual electricity use of around **40 U.S. homes**
--   Would take about **286 acres of U.S. forests** a full year to sequester
--   417 round trips from SD to NY
--   Roughly **23,000,000 smartphones charged**
+-   Equivalent to driving a gas-powered car roughly **960,000 miles**
+-   Same as the annual electricity use of around **51 U.S. homes**
+-   Would take about **381 acres of U.S. forests** a full year to sequester
+-   Roughly **30 million smartphones charged**
     -   Source: EPA [Greenhouse Gas Equivalencies Calculator](https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator#results)
 
 ------------------------------------------------------------------------
@@ -403,7 +402,7 @@ Stacks ordered (bottom → top) by global category total.
 plotlyOutput("sankey", height = "640px")
 ```
 
----
+------------------------------------------------------------------------
 
 ## Emissions by Office --- Distribution {.smaller}
 
@@ -424,7 +423,7 @@ plotOutput("share_by_office", height = "560px")
 ```
 
 ::: aside
-Each office's share of total spend (green) vs. share of total emissions (red). Red > green means the office is more carbon-intensive than its spending alone would suggest.
+Each office's share of total spend (green) vs. share of total emissions (red). Red \> green means the office is more carbon-intensive than its spending alone would suggest.
 :::
 
 ------------------------------------------------------------------------
@@ -451,19 +450,20 @@ kg CO~2~e per dollar spent, category totals. Dashed line is the overall average 
 ------------------------------------------------------------------------
 
 ## Limitations
+
 -   Remember that this is an *approximation*
     1.  No way to actually derive the exact emissions spent by the association
-- Flight data is approximated by overall spend rather than specific flight numbers
-- Used automated text matching methods (regular expressions) to shift through all 17k purchase entries -- certain things needed to be removed from the audit (i.e., tax adjustments)
+-   Flight data is approximated by overall spend rather than specific flight numbers
+-   Used automated text matching methods (regular expressions) to shift through all 17k purchase entries -- certain things needed to be removed from the audit (i.e., tax adjustments)
 
 ------------------------------------------------------------------------
 
-  ## Potential Solutions
+\## Potential Solutions
 
-1. Reduce Amazon spending
-2. Identify more sustainable travel options
-3. For flights: utilize carbon forecasts online to identify better options:
-    i. Earlier flights
+1.  Reduce Amazon spending
+2.  Identify more sustainable travel options
+3.  For flights: utilize carbon forecasts online to identify better options:
+    i.  Earlier flights
     ii. Newer aircraft
     iii. Fuel-efficient vehicles
 
@@ -471,12 +471,12 @@ kg CO~2~e per dollar spent, category totals. Dashed line is the overall average 
 
 ## Next Steps
 
-- EJA + SSC -- implement **Waste Reduction Protocols**
-  - Identify sustainable alternatives to Amazon purchases
-  - Target: **end of the school year**
-- EJA + Senate Special Committee on Environmental Justice - identify opportunities for carbon offsets, reinvesting in green initiatives
-  - Revive SSC's Green Initiative Fund to fund student-powered sustainability projects, use A.S. institutional position and funding to implement as necessary
-- Conversations to come! 
+-   EJA + SSC -- implement **Waste Reduction Protocols**
+    -   Identify sustainable alternatives to Amazon purchases
+    -   Target: **end of the school year**
+-   EJA + Senate Special Committee on Environmental Justice - identify opportunities for carbon offsets, reinvesting in green initiatives
+    -   Revive SSC's Green Initiative Fund to fund student-powered sustainability projects, use A.S. institutional position and funding to implement as necessary
+-   Conversations to come!
 
 ------------------------------------------------------------------------
 
