@@ -428,9 +428,9 @@ kg CO~2~e per dollar spent, category totals. Dashed line is the overall average 
 1. Reduce Amazon spending
 2. Identify more sustainable travel options
 3. For flights: utilize carbon forecasts online to identify better options:
-  1. Earlier flights
-  2. Newer aircraft
-  3. Fuel-efficient vehicles
+    i. Earlier flights
+    ii. Newer aircraft
+    iii. Fuel-efficient vehicles
 
 ------------------------------------------------------------------------
 
