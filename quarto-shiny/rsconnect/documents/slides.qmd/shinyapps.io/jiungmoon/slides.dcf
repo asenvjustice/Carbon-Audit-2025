@@ -1,0 +1,10 @@
+name: slides
+title:
+username: jiungmoon
+account: jiungmoon
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17986906
+bundleId: 12593283
+url: https://jiungmoon.shinyapps.io/slides/
+version: 1

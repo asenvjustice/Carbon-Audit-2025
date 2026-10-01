@@ -1,0 +1,8 @@
+.Renviron.example
+.git
+.gitignore
+README.md
+README.html
+README_files/
+.RData
+.Rhistory
